@@ -13,43 +13,43 @@
 
 int main(void){
     auto uint8_t valor = 0;
-	DDRA = 0;
-	PORTA = 255;
-	DDRC = 255;
-	PORTC = 0;
+	DDRB = 0;
+	PORTB = 255;
+	DDRA = 255;
+	PORTA = 0;
 	while(1){
-		valor = PINA;
+		valor = PINB;
 		valor = ~valor;
 		switch(valor){
 			case 1:
-				PORTC = 0b00000110;
+				PORTA = 0b00000110;
 				break;
 			case 2:
-				PORTC = 0b01011011;
+				PORTA = 0b01011011;
 				break;
 			case 3:
-				PORTC = 0b01001111;
+				PORTA = 0b01001111;
 				break;
 			case 4:
-				PORTC = 0b01100110;
+				PORTA = 0b01100110;
 				break;
 			case 5:
-				PORTC = 0b01101101;
+				PORTA = 0b01101101;
 				break;
 			case 6:
-				PORTC = 0b01111101;
+				PORTA = 0b01111101;
 				break;
 			case 7:
-				PORTC = 0b00000111;
+				PORTA = 0b00000111;
 				break;
 			case 8:
-				PORTC = 0b01111111;
+				PORTA = 0b01111111;
 				break;
 			case 9:
-				PORTC = 0b01101111;
+				PORTA = 0b01101111;
 				break;
 			default:
-				PORTC = 0b00111111;
+				PORTA = 0b00111111;
 		}
 		_delay_ms(5);
     }
