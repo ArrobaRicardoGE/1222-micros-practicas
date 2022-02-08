@@ -19,7 +19,7 @@ uint8_t cero_en_bit(volatile uint8_t *LUGAR, uint8_t BIT)
 }
 
 void show_digits() {
-	PORTC = (vals[1] << 4) + vals[0];
+	PORTB = (vals[1] << 4) + vals[0];
 	PORTD = (vals[3] << 4) + vals[2];
 }
 
@@ -85,7 +85,7 @@ int main(void)
 {
     DDRA = 0b00001111;
 	PORTA = 255;
-	DDRC = DDRD = 255;
+	DDRB = DDRD = 255;
     while (1) 
     {
 		read_kbd();

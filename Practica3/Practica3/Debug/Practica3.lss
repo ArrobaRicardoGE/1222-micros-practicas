@@ -106,7 +106,7 @@ uint8_t cero_en_bit(volatile uint8_t *LUGAR, uint8_t BIT)
 00000094 <show_digits>:
 
 void show_digits() {
-	PORTC = (vals[1] << 4) + vals[0];
+	PORTB = (vals[1] << 4) + vals[0];
   94:	e0 e6       	ldi	r30, 0x60	; 96
   96:	f0 e0       	ldi	r31, 0x00	; 0
   98:	91 81       	ldd	r25, Z+1	; 0x01
@@ -115,7 +115,7 @@ void show_digits() {
   9e:	92 9f       	mul	r25, r18
   a0:	80 0d       	add	r24, r0
   a2:	11 24       	eor	r1, r1
-  a4:	85 bb       	out	0x15, r24	; 21
+  a4:	88 bb       	out	0x18, r24	; 24
 	PORTD = (vals[3] << 4) + vals[2];
   a6:	93 81       	ldd	r25, Z+3	; 0x03
   a8:	82 81       	ldd	r24, Z+2	; 0x02
@@ -434,9 +434,9 @@ int main(void)
 	PORTA = 255;
  234:	8f ef       	ldi	r24, 0xFF	; 255
  236:	8b bb       	out	0x1b, r24	; 27
-	DDRC = DDRD = 255;
+	DDRB = DDRD = 255;
  238:	81 bb       	out	0x11, r24	; 17
- 23a:	84 bb       	out	0x14, r24	; 20
+ 23a:	87 bb       	out	0x17, r24	; 23
     while (1) 
     {
 		read_kbd();
