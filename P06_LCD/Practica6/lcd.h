@@ -20,7 +20,8 @@
 #define LCD_Cmd_Func2Lin 0b00101000
 #define LCD_Cmd_Off	0b00001000
 #define LCD_Cmd_ModeDnS	 0b00000110
-#define LCD_Cmd_OnsCsB	0b00001100
+#define LCD_Cmd_OnsCsB	0b00001100		// Entry mode / cursor off
+#define LCD_Cmd_Blink	0b00001101		// Blinking on
 
 // Prototypes
 void LCD_inicialization(void);
