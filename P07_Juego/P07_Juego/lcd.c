@@ -25,6 +25,7 @@ void LCD_inicialization(void){
 	LCD_CMD_8BIT(LCD_Cmd_Clear); //limpia el display
 	LCD_CMD_8BIT(LCD_Cmd_ModeDnS); //Entry mode set ID S
 	LCD_CMD_8BIT(LCD_Cmd_OnsCsB); //Enciende el display
+	LCD_CMD_8BIT(0b10000000); //Write data
 }
 void LCD_WR_CHAR(uint8_t dato){
 	PORTLCD = dato>>4;
