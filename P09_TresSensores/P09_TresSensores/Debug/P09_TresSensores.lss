@@ -1,0 +1,282 @@
+
+P09_TresSensores.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         00000184  00000000  00000000  00000054  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .data         00000000  00800060  00800060  000001d8  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  2 .comment      00000030  00000000  00000000  000001d8  2**0
+                  CONTENTS, READONLY
+  3 .note.gnu.avr.deviceinfo 0000003c  00000000  00000000  00000208  2**2
+                  CONTENTS, READONLY
+  4 .debug_aranges 00000040  00000000  00000000  00000244  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  5 .debug_info   0000082f  00000000  00000000  00000284  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_abbrev 00000680  00000000  00000000  00000ab3  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_line   00000367  00000000  00000000  00001133  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_frame  00000064  00000000  00000000  0000149c  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_str    0000038b  00000000  00000000  00001500  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_loc    000001af  00000000  00000000  0000188b  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 11 .debug_ranges 00000030  00000000  00000000  00001a3a  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	0c 94 2a 00 	jmp	0x54	; 0x54 <__ctors_end>
+   4:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+   8:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+   c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  10:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  14:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  18:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  1c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  20:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  24:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  28:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  2c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  30:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  34:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  38:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  3c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  40:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  44:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  48:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  4c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  50:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+
+00000054 <__ctors_end>:
+  54:	11 24       	eor	r1, r1
+  56:	1f be       	out	0x3f, r1	; 63
+  58:	cf e5       	ldi	r28, 0x5F	; 95
+  5a:	d4 e0       	ldi	r29, 0x04	; 4
+  5c:	de bf       	out	0x3e, r29	; 62
+  5e:	cd bf       	out	0x3d, r28	; 61
+  60:	0e 94 7b 00 	call	0xf6	; 0xf6 <main>
+  64:	0c 94 c0 00 	jmp	0x180	; 0x180 <_exit>
+
+00000068 <__bad_interrupt>:
+  68:	0c 94 00 00 	jmp	0	; 0x0 <__vectors>
+
+0000006c <saca_uno>:
+#include <avr/io.h>
+#include <util/delay.h>
+#include <stdint.h>
+
+void saca_uno(volatile uint8_t *LUGAR, uint8_t BIT){
+	*LUGAR=*LUGAR|(1<<BIT);
+  6c:	fc 01       	movw	r30, r24
+  6e:	40 81       	ld	r20, Z
+  70:	21 e0       	ldi	r18, 0x01	; 1
+  72:	30 e0       	ldi	r19, 0x00	; 0
+  74:	02 c0       	rjmp	.+4      	; 0x7a <saca_uno+0xe>
+  76:	22 0f       	add	r18, r18
+  78:	33 1f       	adc	r19, r19
+  7a:	6a 95       	dec	r22
+  7c:	e2 f7       	brpl	.-8      	; 0x76 <saca_uno+0xa>
+  7e:	24 2b       	or	r18, r20
+  80:	20 83       	st	Z, r18
+  82:	08 95       	ret
+
+00000084 <uno_en_bit>:
+}
+
+uint8_t uno_en_bit(volatile uint8_t *LUGAR, uint8_t BIT){
+	return ((*LUGAR&(1<<BIT)));
+  84:	fc 01       	movw	r30, r24
+  86:	20 81       	ld	r18, Z
+  88:	81 e0       	ldi	r24, 0x01	; 1
+  8a:	90 e0       	ldi	r25, 0x00	; 0
+  8c:	02 c0       	rjmp	.+4      	; 0x92 <uno_en_bit+0xe>
+  8e:	88 0f       	add	r24, r24
+  90:	99 1f       	adc	r25, r25
+  92:	6a 95       	dec	r22
+  94:	e2 f7       	brpl	.-8      	; 0x8e <uno_en_bit+0xa>
+}
+  96:	82 23       	and	r24, r18
+  98:	08 95       	ret
+
+0000009a <lectura_adc>:
+
+uint16_t lectura_adc(uint8_t adcbit) {
+	ADMUX &= 0b11100000;
+  9a:	97 b1       	in	r25, 0x07	; 7
+  9c:	90 7e       	andi	r25, 0xE0	; 224
+  9e:	97 b9       	out	0x07, r25	; 7
+	ADMUX |= adcbit;
+  a0:	97 b1       	in	r25, 0x07	; 7
+  a2:	89 2b       	or	r24, r25
+  a4:	87 b9       	out	0x07, r24	; 7
+	saca_uno(&ADCSRA, 6);
+  a6:	66 e0       	ldi	r22, 0x06	; 6
+  a8:	86 e2       	ldi	r24, 0x26	; 38
+  aa:	90 e0       	ldi	r25, 0x00	; 0
+  ac:	0e 94 36 00 	call	0x6c	; 0x6c <saca_uno>
+	while(uno_en_bit(&ADCSRA, 6));
+  b0:	66 e0       	ldi	r22, 0x06	; 6
+  b2:	86 e2       	ldi	r24, 0x26	; 38
+  b4:	90 e0       	ldi	r25, 0x00	; 0
+  b6:	0e 94 42 00 	call	0x84	; 0x84 <uno_en_bit>
+  ba:	81 11       	cpse	r24, r1
+  bc:	f9 cf       	rjmp	.-14     	; 0xb0 <lectura_adc+0x16>
+	return ADC; 
+  be:	84 b1       	in	r24, 0x04	; 4
+  c0:	95 b1       	in	r25, 0x05	; 5
+}
+  c2:	08 95       	ret
+
+000000c4 <map_led>:
+
+uint8_t map_led(uint16_t val) {
+	PORTD = val; 
+  c4:	82 bb       	out	0x12, r24	; 18
+	if(val < 205) return 0;
+  c6:	8d 3c       	cpi	r24, 0xCD	; 205
+  c8:	91 05       	cpc	r25, r1
+  ca:	68 f0       	brcs	.+26     	; 0xe6 <map_led+0x22>
+	if(val < 410) return 1;
+  cc:	8a 39       	cpi	r24, 0x9A	; 154
+  ce:	21 e0       	ldi	r18, 0x01	; 1
+  d0:	92 07       	cpc	r25, r18
+  d2:	58 f0       	brcs	.+22     	; 0xea <map_led+0x26>
+	if(val < 614) return 3;
+  d4:	86 36       	cpi	r24, 0x66	; 102
+  d6:	22 e0       	ldi	r18, 0x02	; 2
+  d8:	92 07       	cpc	r25, r18
+  da:	48 f0       	brcs	.+18     	; 0xee <map_led+0x2a>
+	if(val < 819) return 7;
+  dc:	83 33       	cpi	r24, 0x33	; 51
+  de:	93 40       	sbci	r25, 0x03	; 3
+  e0:	40 f4       	brcc	.+16     	; 0xf2 <map_led+0x2e>
+  e2:	87 e0       	ldi	r24, 0x07	; 7
+  e4:	08 95       	ret
+	return ADC; 
+}
+
+uint8_t map_led(uint16_t val) {
+	PORTD = val; 
+	if(val < 205) return 0;
+  e6:	80 e0       	ldi	r24, 0x00	; 0
+  e8:	08 95       	ret
+	if(val < 410) return 1;
+  ea:	81 e0       	ldi	r24, 0x01	; 1
+  ec:	08 95       	ret
+	if(val < 614) return 3;
+  ee:	83 e0       	ldi	r24, 0x03	; 3
+  f0:	08 95       	ret
+	if(val < 819) return 7;
+	return 15; 
+  f2:	8f e0       	ldi	r24, 0x0F	; 15
+}
+  f4:	08 95       	ret
+
+000000f6 <main>:
+
+int main(void)
+{
+    // Entradas y salidas
+	DDRB = DDRC = 255;
+  f6:	8f ef       	ldi	r24, 0xFF	; 255
+  f8:	84 bb       	out	0x14, r24	; 20
+  fa:	87 bb       	out	0x17, r24	; 23
+	DDRD = 255;
+  fc:	81 bb       	out	0x11, r24	; 17
+	
+	// ADC
+	ADMUX = 0b01000000;
+  fe:	80 e4       	ldi	r24, 0x40	; 64
+ 100:	87 b9       	out	0x07, r24	; 7
+	SFIOR = 0;
+ 102:	10 be       	out	0x30, r1	; 48
+	ADCSRA = 0b10010101; 
+ 104:	85 e9       	ldi	r24, 0x95	; 149
+ 106:	86 b9       	out	0x06, r24	; 6
+	uint16_t r = 0;
+    while (1) 
+    {
+		r = lectura_adc(0); // Temperatura
+ 108:	80 e0       	ldi	r24, 0x00	; 0
+ 10a:	0e 94 4d 00 	call	0x9a	; 0x9a <lectura_adc>
+		PORTB &= 0b11110000;
+ 10e:	28 b3       	in	r18, 0x18	; 24
+ 110:	20 7f       	andi	r18, 0xF0	; 240
+ 112:	28 bb       	out	0x18, r18	; 24
+		PORTB |= map_led(r); 
+ 114:	0e 94 62 00 	call	0xc4	; 0xc4 <map_led>
+ 118:	98 b3       	in	r25, 0x18	; 24
+ 11a:	89 2b       	or	r24, r25
+ 11c:	88 bb       	out	0x18, r24	; 24
+	#else
+		//round up by default
+		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
+	#endif
+
+	__builtin_avr_delay_cycles(__ticks_dc);
+ 11e:	2f e7       	ldi	r18, 0x7F	; 127
+ 120:	89 ea       	ldi	r24, 0xA9	; 169
+ 122:	93 e0       	ldi	r25, 0x03	; 3
+ 124:	21 50       	subi	r18, 0x01	; 1
+ 126:	80 40       	sbci	r24, 0x00	; 0
+ 128:	90 40       	sbci	r25, 0x00	; 0
+ 12a:	e1 f7       	brne	.-8      	; 0x124 <main+0x2e>
+ 12c:	00 c0       	rjmp	.+0      	; 0x12e <main+0x38>
+ 12e:	00 00       	nop
+		_delay_ms(300); 
+		
+		r = lectura_adc(1); // Humedad
+ 130:	81 e0       	ldi	r24, 0x01	; 1
+ 132:	0e 94 4d 00 	call	0x9a	; 0x9a <lectura_adc>
+		PORTB &= 0b00001111;
+ 136:	28 b3       	in	r18, 0x18	; 24
+ 138:	2f 70       	andi	r18, 0x0F	; 15
+ 13a:	28 bb       	out	0x18, r18	; 24
+		PORTB |= (map_led(r) << 4);
+ 13c:	0e 94 62 00 	call	0xc4	; 0xc4 <map_led>
+ 140:	20 e1       	ldi	r18, 0x10	; 16
+ 142:	82 9f       	mul	r24, r18
+ 144:	c0 01       	movw	r24, r0
+ 146:	11 24       	eor	r1, r1
+ 148:	98 b3       	in	r25, 0x18	; 24
+ 14a:	89 2b       	or	r24, r25
+ 14c:	88 bb       	out	0x18, r24	; 24
+ 14e:	8f e7       	ldi	r24, 0x7F	; 127
+ 150:	99 ea       	ldi	r25, 0xA9	; 169
+ 152:	23 e0       	ldi	r18, 0x03	; 3
+ 154:	81 50       	subi	r24, 0x01	; 1
+ 156:	90 40       	sbci	r25, 0x00	; 0
+ 158:	20 40       	sbci	r18, 0x00	; 0
+ 15a:	e1 f7       	brne	.-8      	; 0x154 <main+0x5e>
+ 15c:	00 c0       	rjmp	.+0      	; 0x15e <main+0x68>
+ 15e:	00 00       	nop
+		_delay_ms(300);
+		
+		r = lectura_adc(2); // pH
+ 160:	82 e0       	ldi	r24, 0x02	; 2
+ 162:	0e 94 4d 00 	call	0x9a	; 0x9a <lectura_adc>
+		PORTC = map_led(r); 
+ 166:	0e 94 62 00 	call	0xc4	; 0xc4 <map_led>
+ 16a:	85 bb       	out	0x15, r24	; 21
+ 16c:	8f e7       	ldi	r24, 0x7F	; 127
+ 16e:	99 ea       	ldi	r25, 0xA9	; 169
+ 170:	23 e0       	ldi	r18, 0x03	; 3
+ 172:	81 50       	subi	r24, 0x01	; 1
+ 174:	90 40       	sbci	r25, 0x00	; 0
+ 176:	20 40       	sbci	r18, 0x00	; 0
+ 178:	e1 f7       	brne	.-8      	; 0x172 <main+0x7c>
+ 17a:	00 c0       	rjmp	.+0      	; 0x17c <main+0x86>
+ 17c:	00 00       	nop
+ 17e:	c4 cf       	rjmp	.-120    	; 0x108 <main+0x12>
+
+00000180 <_exit>:
+ 180:	f8 94       	cli
+
+00000182 <__stop_program>:
+ 182:	ff cf       	rjmp	.-2      	; 0x182 <__stop_program>
