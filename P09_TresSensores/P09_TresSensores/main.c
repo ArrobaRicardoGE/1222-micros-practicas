@@ -51,16 +51,16 @@ int main(void)
 		r = lectura_adc(0); // Temperatura
 		PORTB &= 0b11110000;
 		PORTB |= map_led(r); 
-		_delay_ms(300); 
+		_delay_ms(50); 
 		
 		r = lectura_adc(1); // Humedad
 		PORTB &= 0b00001111;
 		PORTB |= (map_led(r) << 4);
-		_delay_ms(300);
+		_delay_ms(50);
 		
 		r = lectura_adc(2); // pH
 		PORTC = map_led(r); 
-		_delay_ms(300);
+		_delay_ms(50);
     }
 }
 
