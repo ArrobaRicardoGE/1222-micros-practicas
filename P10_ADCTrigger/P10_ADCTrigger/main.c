@@ -15,7 +15,7 @@
 volatile int x = 0, y = 0; 
 
 ISR (ADC_vect) {
-	OCR2 = (int)((double)ADC * 255.0 / 1023.0); 
+	OCR2 = (int)((double)ADC * 255.0 / 1024.0);
 }
 
 ISR (TIMER0_COMP_vect) {}
@@ -39,15 +39,12 @@ int main(void)
 	TCCR2 |= (1<<WGM20)|(1<<WGM21);                   
 	TCCR2 |= (1<<COM21)|(1<<CS20)|(1<<CS21)|(0<<CS22);
 	
-	OCR2 = 63;
+	OCR2 = 0;
 	
 	// Puertos
-	DDRD = 255;
+	DDRD = 255; 
 	DDRC = 255; 
 	 
-    while (1) 
-    {
-		
-    }
+    while (1) {}
 }
 
