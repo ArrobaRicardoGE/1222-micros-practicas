@@ -1,9 +1,9 @@
 #ifndef KBD_H_INCLUDED
 #define KBD_H_INCLUDED
 
-#define DDRKBD DDRD
-#define PORTKBD PORTD
-#define PINKBD PIND
+#define DDRKBD DDRC
+#define PORTKBD PORTC
+#define PINKBD PINC
 #define KBD_NCOLS 4 
 #define KBD_NROWS 4
 

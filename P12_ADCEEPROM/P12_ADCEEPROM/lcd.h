@@ -9,9 +9,9 @@
 #include "util.h"
 
 // Defines
-#define DDRLCD DDRC
-#define PORTLCD PORTC
-#define PINLCD PINC
+#define DDRLCD DDRD
+#define PORTLCD PORTD
+#define PINLCD PIND
 #define RS 4
 #define RW 5
 #define E 6

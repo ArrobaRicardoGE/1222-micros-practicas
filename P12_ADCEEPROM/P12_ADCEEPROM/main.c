@@ -19,7 +19,7 @@
 volatile uint16_t next_dir = 0, current_dir; 
 volatile int measuring = 1; 
 
-void to_string(uint8_t x, char* s, int offset) {
+void to_string(uint16_t x, char* s, int offset) {
 	s[offset + 2] = x % 10 + '0';
 	x /= 10;
 	s[offset + 1] = x % 10 + '0';
@@ -76,11 +76,13 @@ int main(void)
 			to_string(current_dir, s, 1); 
 			to_string(EEPROM_read(current_dir), s, 6);  
 			LCD_WR_string(s);
-			r = read_kbd(); 
+			r = -1; 
+			while(r == -1)
+				r = read_kbd(); 
 			if(r == 1) break;
 			if(r == 2) current_dir = (current_dir == 0 ? 0 : current_dir - 1);
 			if(r == 3) current_dir = (current_dir == next_dir - 1 ? current_dir : current_dir + 1);
-			for(int i = 0; i < 9; i++)LCD_CMD_8BIT(LCD_Cmd_ShiftL); 
+			for(int i = 0; i < 9; i++) LCD_CMD_8BIT(LCD_Cmd_ShiftL); 
 		}
 	}
 }
