@@ -23,9 +23,9 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING
   9 .debug_str    00000461  00000000  00000000  00002d54  2**0
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_loc    000007fa  00000000  00000000  000031b5  2**0
+ 10 .debug_loc    00000807  00000000  00000000  000031b5  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_ranges 000000b0  00000000  00000000  000039af  2**0
+ 11 .debug_ranges 000000b0  00000000  00000000  000039bc  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -603,8 +603,8 @@ void USART_Init (uint8_t ubrr)
  3ca:	88 e9       	ldi	r24, 0x98	; 152
  3cc:	8a b9       	out	0x0a, r24	; 10
 	//habilité recepción, transmisión e interrupción de la recepción
-	UCSRC = (1<<URSEL)|(1<<UCSZ1)|(1<<UCSZ2)|(0<<USBS);
- 3ce:	84 e8       	ldi	r24, 0x84	; 132
+	UCSRC = (1<<URSEL)|(1<<UCSZ1)|(1<<UCSZ0)|(0<<USBS);
+ 3ce:	86 e8       	ldi	r24, 0x86	; 134
  3d0:	80 bd       	out	0x20, r24	; 32
  3d2:	08 95       	ret
 
@@ -690,9 +690,8 @@ int main(void)
  43e:	8f 3f       	cpi	r24, 0xFF	; 255
  440:	e1 f3       	breq	.-8      	; 0x43a <main+0x18>
 			r = read_kbd();
-		//UDR = r;
-		UDR = 'a';  
- 442:	81 e6       	ldi	r24, 0x61	; 97
+		UDR = r + '0';
+ 442:	80 5d       	subi	r24, 0xD0	; 208
  444:	8c b9       	out	0x0c, r24	; 12
 	}
  446:	f7 cf       	rjmp	.-18     	; 0x436 <main+0x14>

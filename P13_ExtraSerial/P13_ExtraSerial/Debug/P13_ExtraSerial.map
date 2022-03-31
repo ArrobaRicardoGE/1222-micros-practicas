@@ -487,12 +487,12 @@ END GROUP
  .debug_str     0x00000455        0xc util.o
                                 0x19e (size before relaxing)
 
-.debug_loc      0x00000000      0x7fa
+.debug_loc      0x00000000      0x807
  *(.debug_loc)
  .debug_loc     0x00000000      0x136 kbd.o
  .debug_loc     0x00000136      0x53e lcd.o
- .debug_loc     0x00000674      0x136 main.o
- .debug_loc     0x000007aa       0x50 util.o
+ .debug_loc     0x00000674      0x143 main.o
+ .debug_loc     0x000007b7       0x50 util.o
 
 .debug_macinfo
  *(.debug_macinfo)

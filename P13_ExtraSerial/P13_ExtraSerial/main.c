@@ -17,7 +17,7 @@ void USART_Init (uint8_t ubrr)
 	UBRRL = (uint8_t) (ubrr);
 	UCSRB = (1<<RXEN)|(1<<TXEN)|(1<<RXCIE);
 	//habilité recepción, transmisión e interrupción de la recepción
-	UCSRC = (1<<URSEL)|(1<<UCSZ1)|(1<<UCSZ2)|(0<<USBS);
+	UCSRC = (1<<URSEL)|(1<<UCSZ1)|(1<<UCSZ0)|(0<<USBS);
 	//paquetes de 8 bits, con 1 bits de parada, sin paridad
 }
 ISR(USART_RXC_vect)
@@ -40,7 +40,6 @@ int main(void)
 		int8_t r = -1; 
 		while(r == -1)
 			r = read_kbd();
-		//UDR = r;
-		UDR = 'a';  
+		UDR = r + '0';
 	}
 }
