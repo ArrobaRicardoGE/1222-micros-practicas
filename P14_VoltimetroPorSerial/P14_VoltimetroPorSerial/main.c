@@ -30,8 +30,7 @@ uint8_t lectura_adc(uint8_t adcbit) {
 
 void mandar_serial(uint8_t dato) {
 	UDR = dato; 
-	while(!uno_en_bit(&UCSRA, 6)); 
-	_delay_ms(1); 
+	while(!uno_en_bit(&UCSRA, TXC) && !(uno_en_bit(&UCSRA, UDRE))); 
 }
 
 int main(void)
