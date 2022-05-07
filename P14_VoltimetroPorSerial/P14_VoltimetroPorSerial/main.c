@@ -32,7 +32,7 @@ void mandar_serial(uint8_t dato) {
 	UDR = dato; 
 	while(!uno_en_bit(&UCSRA, TXC) && !(uno_en_bit(&UCSRA, UDRE))); 
 }
-
+ q
 int main(void)
 {	
 	// ADC

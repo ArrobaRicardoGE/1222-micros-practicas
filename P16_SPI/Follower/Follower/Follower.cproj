@@ -12,9 +12,9 @@
     <OutputFileName>$(MSBuildProjectName)</OutputFileName>
     <OutputFileExtension>.elf</OutputFileExtension>
     <OutputDirectory>$(MSBuildProjectDirectory)\$(Configuration)</OutputDirectory>
-    <AssemblyName>Follower1</AssemblyName>
-    <Name>Follower1</Name>
-    <RootNamespace>Follower1</RootNamespace>
+    <AssemblyName>Follower</AssemblyName>
+    <Name>Follower</Name>
+    <RootNamespace>Follower</RootNamespace>
     <ToolchainFlavour>Native</ToolchainFlavour>
     <KeepTimersRunning>true</KeepTimersRunning>
     <OverrideVtor>false</OverrideVtor>
