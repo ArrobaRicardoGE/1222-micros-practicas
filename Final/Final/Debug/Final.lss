@@ -1,0 +1,473 @@
+
+Final.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         00000304  00000000  00000000  00000054  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .data         00000000  00800060  00800060  00000358  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  2 .comment      00000030  00000000  00000000  00000358  2**0
+                  CONTENTS, READONLY
+  3 .note.gnu.avr.deviceinfo 0000003c  00000000  00000000  00000388  2**2
+                  CONTENTS, READONLY
+  4 .debug_aranges 00000090  00000000  00000000  000003c4  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  5 .debug_info   00000ebf  00000000  00000000  00000454  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_abbrev 00000746  00000000  00000000  00001313  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_line   000004c5  00000000  00000000  00001a59  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_frame  0000011c  00000000  00000000  00001f20  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_str    000003d8  00000000  00000000  0000203c  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_loc    0000034d  00000000  00000000  00002414  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 11 .debug_ranges 00000088  00000000  00000000  00002761  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	0c 94 2a 00 	jmp	0x54	; 0x54 <__ctors_end>
+   4:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+   8:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+   c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  10:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  14:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  18:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  1c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  20:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  24:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  28:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  2c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  30:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  34:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  38:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  3c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  40:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  44:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  48:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  4c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  50:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+
+00000054 <__ctors_end>:
+  54:	11 24       	eor	r1, r1
+  56:	1f be       	out	0x3f, r1	; 63
+  58:	cf e5       	ldi	r28, 0x5F	; 95
+  5a:	d4 e0       	ldi	r29, 0x04	; 4
+  5c:	de bf       	out	0x3e, r29	; 62
+  5e:	cd bf       	out	0x3d, r28	; 61
+  60:	0e 94 3b 01 	call	0x276	; 0x276 <main>
+  64:	0c 94 80 01 	jmp	0x300	; 0x300 <_exit>
+
+00000068 <__bad_interrupt>:
+  68:	0c 94 00 00 	jmp	0	; 0x0 <__vectors>
+
+0000006c <transmit>:
+#define CD 1
+
+ void transmit(uint8_t cData, uint8_t Device)
+ {
+	 /* Start transmission */
+	 PORTSS = ~(1<<Device); // Pongo un 0 en el bit de SS
+  6c:	21 e0       	ldi	r18, 0x01	; 1
+  6e:	30 e0       	ldi	r19, 0x00	; 0
+  70:	02 c0       	rjmp	.+4      	; 0x76 <transmit+0xa>
+  72:	22 0f       	add	r18, r18
+  74:	33 1f       	adc	r19, r19
+  76:	6a 95       	dec	r22
+  78:	e2 f7       	brpl	.-8      	; 0x72 <transmit+0x6>
+  7a:	20 95       	com	r18
+  7c:	2b bb       	out	0x1b, r18	; 27
+	 SPDR = cData; //Comiendo el envío de información
+  7e:	8f b9       	out	0x0f, r24	; 15
+	 /* Wait for transmission complete */
+	 while(!(SPSR & (1<<SPIF)));
+  80:	77 9b       	sbis	0x0e, 7	; 14
+  82:	fe cf       	rjmp	.-4      	; 0x80 <transmit+0x14>
+	 PORTSS = 255;
+  84:	8f ef       	ldi	r24, 0xFF	; 255
+  86:	8b bb       	out	0x1b, r24	; 27
+  88:	08 95       	ret
+
+0000008a <SPI_Write>:
+ }
+
+ void SPI_Write(uint8_t data) {
+	 transmit(data, 4); // screen on 4
+  8a:	64 e0       	ldi	r22, 0x04	; 4
+  8c:	0e 94 36 00 	call	0x6c	; 0x6c <transmit>
+  90:	08 95       	ret
+
+00000092 <reset>:
+#define BLUE    0x001F
+#define RED     0xF800
+#define GREEN   0x07E0
+
+void reset() {
+	CS_IDLE;
+  92:	60 e0       	ldi	r22, 0x00	; 0
+  94:	82 e3       	ldi	r24, 0x32	; 50
+  96:	90 e0       	ldi	r25, 0x00	; 0
+  98:	0e 94 67 01 	call	0x2ce	; 0x2ce <saca_uno>
+	RD_IDLE;
+	WR_IDLE;
+	saca_uno(&PORTB, RESET);
+  9c:	60 e0       	ldi	r22, 0x00	; 0
+  9e:	88 e3       	ldi	r24, 0x38	; 56
+  a0:	90 e0       	ldi	r25, 0x00	; 0
+  a2:	0e 94 67 01 	call	0x2ce	; 0x2ce <saca_uno>
+	CS_ACTIVE;
+  a6:	60 e0       	ldi	r22, 0x00	; 0
+  a8:	82 e3       	ldi	r24, 0x32	; 50
+  aa:	90 e0       	ldi	r25, 0x00	; 0
+  ac:	0e 94 73 01 	call	0x2e6	; 0x2e6 <saca_cero>
+	CD_COMMAND;
+  b0:	61 e0       	ldi	r22, 0x01	; 1
+  b2:	82 e3       	ldi	r24, 0x32	; 50
+  b4:	90 e0       	ldi	r25, 0x00	; 0
+  b6:	0e 94 73 01 	call	0x2e6	; 0x2e6 <saca_cero>
+	write8(0x00);
+  ba:	80 e0       	ldi	r24, 0x00	; 0
+  bc:	0e 94 45 00 	call	0x8a	; 0x8a <SPI_Write>
+	for(uint8_t i=0; i<3; i++)
+  c0:	80 e0       	ldi	r24, 0x00	; 0
+  c2:	01 c0       	rjmp	.+2      	; 0xc6 <reset+0x34>
+  c4:	8f 5f       	subi	r24, 0xFF	; 255
+  c6:	83 30       	cpi	r24, 0x03	; 3
+  c8:	e8 f3       	brcs	.-6      	; 0xc4 <reset+0x32>
+	{
+		WR_STROBE; // Three extra 0x00s
+	}
+	CS_IDLE;
+  ca:	60 e0       	ldi	r22, 0x00	; 0
+  cc:	82 e3       	ldi	r24, 0x32	; 50
+  ce:	90 e0       	ldi	r25, 0x00	; 0
+  d0:	0e 94 67 01 	call	0x2ce	; 0x2ce <saca_uno>
+  d4:	08 95       	ret
+
+000000d6 <start>:
+}
+
+void start() {
+	reset();
+  d6:	0e 94 49 00 	call	0x92	; 0x92 <reset>
+	#else
+		//round up by default
+		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
+	#endif
+
+	__builtin_avr_delay_cycles(__ticks_dc);
+  da:	8f e4       	ldi	r24, 0x4F	; 79
+  dc:	93 ec       	ldi	r25, 0xC3	; 195
+  de:	01 97       	sbiw	r24, 0x01	; 1
+  e0:	f1 f7       	brne	.-4      	; 0xde <start+0x8>
+  e2:	00 c0       	rjmp	.+0      	; 0xe4 <start+0xe>
+  e4:	00 00       	nop
+  e6:	08 95       	ret
+
+000000e8 <Set_Addr_Window>:
+	_delay_ms(200);
+}
+
+void Set_Addr_Window(int16_t x1, int16_t y1, int16_t x2, int16_t y2) {
+  e8:	cf 92       	push	r12
+  ea:	df 92       	push	r13
+  ec:	ef 92       	push	r14
+  ee:	ff 92       	push	r15
+  f0:	0f 93       	push	r16
+  f2:	1f 93       	push	r17
+  f4:	cf 93       	push	r28
+  f6:	df 93       	push	r29
+  f8:	18 2f       	mov	r17, r24
+  fa:	09 2f       	mov	r16, r25
+  fc:	c6 2f       	mov	r28, r22
+  fe:	d7 2f       	mov	r29, r23
+ 100:	d4 2e       	mov	r13, r20
+ 102:	c5 2e       	mov	r12, r21
+ 104:	f2 2e       	mov	r15, r18
+ 106:	e3 2e       	mov	r14, r19
+	CS_ACTIVE;
+ 108:	60 e0       	ldi	r22, 0x00	; 0
+ 10a:	82 e3       	ldi	r24, 0x32	; 50
+ 10c:	90 e0       	ldi	r25, 0x00	; 0
+ 10e:	0e 94 73 01 	call	0x2e6	; 0x2e6 <saca_cero>
+	writeCmdData16(ILI932X_HOR_START_AD, x1); // Set address window
+ 112:	61 e0       	ldi	r22, 0x01	; 1
+ 114:	82 e3       	ldi	r24, 0x32	; 50
+ 116:	90 e0       	ldi	r25, 0x00	; 0
+ 118:	0e 94 73 01 	call	0x2e6	; 0x2e6 <saca_cero>
+ 11c:	80 e0       	ldi	r24, 0x00	; 0
+ 11e:	0e 94 45 00 	call	0x8a	; 0x8a <SPI_Write>
+ 122:	80 e5       	ldi	r24, 0x50	; 80
+ 124:	0e 94 45 00 	call	0x8a	; 0x8a <SPI_Write>
+ 128:	61 e0       	ldi	r22, 0x01	; 1
+ 12a:	82 e3       	ldi	r24, 0x32	; 50
+ 12c:	90 e0       	ldi	r25, 0x00	; 0
+ 12e:	0e 94 67 01 	call	0x2ce	; 0x2ce <saca_uno>
+ 132:	80 2f       	mov	r24, r16
+ 134:	0e 94 45 00 	call	0x8a	; 0x8a <SPI_Write>
+ 138:	81 2f       	mov	r24, r17
+ 13a:	0e 94 45 00 	call	0x8a	; 0x8a <SPI_Write>
+	writeCmdData16(ILI932X_HOR_END_AD, x2);
+ 13e:	61 e0       	ldi	r22, 0x01	; 1
+ 140:	82 e3       	ldi	r24, 0x32	; 50
+ 142:	90 e0       	ldi	r25, 0x00	; 0
+ 144:	0e 94 73 01 	call	0x2e6	; 0x2e6 <saca_cero>
+ 148:	80 e0       	ldi	r24, 0x00	; 0
+ 14a:	0e 94 45 00 	call	0x8a	; 0x8a <SPI_Write>
+ 14e:	81 e5       	ldi	r24, 0x51	; 81
+ 150:	0e 94 45 00 	call	0x8a	; 0x8a <SPI_Write>
+ 154:	61 e0       	ldi	r22, 0x01	; 1
+ 156:	82 e3       	ldi	r24, 0x32	; 50
+ 158:	90 e0       	ldi	r25, 0x00	; 0
+ 15a:	0e 94 67 01 	call	0x2ce	; 0x2ce <saca_uno>
+ 15e:	8c 2d       	mov	r24, r12
+ 160:	0e 94 45 00 	call	0x8a	; 0x8a <SPI_Write>
+ 164:	8d 2d       	mov	r24, r13
+ 166:	0e 94 45 00 	call	0x8a	; 0x8a <SPI_Write>
+	writeCmdData16(ILI932X_VER_START_AD, y1);
+ 16a:	61 e0       	ldi	r22, 0x01	; 1
+ 16c:	82 e3       	ldi	r24, 0x32	; 50
+ 16e:	90 e0       	ldi	r25, 0x00	; 0
+ 170:	0e 94 73 01 	call	0x2e6	; 0x2e6 <saca_cero>
+ 174:	80 e0       	ldi	r24, 0x00	; 0
+ 176:	0e 94 45 00 	call	0x8a	; 0x8a <SPI_Write>
+ 17a:	82 e5       	ldi	r24, 0x52	; 82
+ 17c:	0e 94 45 00 	call	0x8a	; 0x8a <SPI_Write>
+ 180:	61 e0       	ldi	r22, 0x01	; 1
+ 182:	82 e3       	ldi	r24, 0x32	; 50
+ 184:	90 e0       	ldi	r25, 0x00	; 0
+ 186:	0e 94 67 01 	call	0x2ce	; 0x2ce <saca_uno>
+ 18a:	8d 2f       	mov	r24, r29
+ 18c:	0e 94 45 00 	call	0x8a	; 0x8a <SPI_Write>
+ 190:	8c 2f       	mov	r24, r28
+ 192:	0e 94 45 00 	call	0x8a	; 0x8a <SPI_Write>
+	writeCmdData16(ILI932X_VER_END_AD, y2);
+ 196:	61 e0       	ldi	r22, 0x01	; 1
+ 198:	82 e3       	ldi	r24, 0x32	; 50
+ 19a:	90 e0       	ldi	r25, 0x00	; 0
+ 19c:	0e 94 73 01 	call	0x2e6	; 0x2e6 <saca_cero>
+ 1a0:	80 e0       	ldi	r24, 0x00	; 0
+ 1a2:	0e 94 45 00 	call	0x8a	; 0x8a <SPI_Write>
+ 1a6:	83 e5       	ldi	r24, 0x53	; 83
+ 1a8:	0e 94 45 00 	call	0x8a	; 0x8a <SPI_Write>
+ 1ac:	61 e0       	ldi	r22, 0x01	; 1
+ 1ae:	82 e3       	ldi	r24, 0x32	; 50
+ 1b0:	90 e0       	ldi	r25, 0x00	; 0
+ 1b2:	0e 94 67 01 	call	0x2ce	; 0x2ce <saca_uno>
+ 1b6:	8e 2d       	mov	r24, r14
+ 1b8:	0e 94 45 00 	call	0x8a	; 0x8a <SPI_Write>
+ 1bc:	8f 2d       	mov	r24, r15
+ 1be:	0e 94 45 00 	call	0x8a	; 0x8a <SPI_Write>
+	writeCmdData16(ILI932X_GRAM_HOR_AD, x1 ); // Set address counter to top left
+ 1c2:	61 e0       	ldi	r22, 0x01	; 1
+ 1c4:	82 e3       	ldi	r24, 0x32	; 50
+ 1c6:	90 e0       	ldi	r25, 0x00	; 0
+ 1c8:	0e 94 73 01 	call	0x2e6	; 0x2e6 <saca_cero>
+ 1cc:	80 e0       	ldi	r24, 0x00	; 0
+ 1ce:	0e 94 45 00 	call	0x8a	; 0x8a <SPI_Write>
+ 1d2:	80 e2       	ldi	r24, 0x20	; 32
+ 1d4:	0e 94 45 00 	call	0x8a	; 0x8a <SPI_Write>
+ 1d8:	61 e0       	ldi	r22, 0x01	; 1
+ 1da:	82 e3       	ldi	r24, 0x32	; 50
+ 1dc:	90 e0       	ldi	r25, 0x00	; 0
+ 1de:	0e 94 67 01 	call	0x2ce	; 0x2ce <saca_uno>
+ 1e2:	80 2f       	mov	r24, r16
+ 1e4:	0e 94 45 00 	call	0x8a	; 0x8a <SPI_Write>
+ 1e8:	81 2f       	mov	r24, r17
+ 1ea:	0e 94 45 00 	call	0x8a	; 0x8a <SPI_Write>
+	writeCmdData16(ILI932X_GRAM_VER_AD, y1 );
+ 1ee:	61 e0       	ldi	r22, 0x01	; 1
+ 1f0:	82 e3       	ldi	r24, 0x32	; 50
+ 1f2:	90 e0       	ldi	r25, 0x00	; 0
+ 1f4:	0e 94 73 01 	call	0x2e6	; 0x2e6 <saca_cero>
+ 1f8:	80 e0       	ldi	r24, 0x00	; 0
+ 1fa:	0e 94 45 00 	call	0x8a	; 0x8a <SPI_Write>
+ 1fe:	81 e2       	ldi	r24, 0x21	; 33
+ 200:	0e 94 45 00 	call	0x8a	; 0x8a <SPI_Write>
+ 204:	61 e0       	ldi	r22, 0x01	; 1
+ 206:	82 e3       	ldi	r24, 0x32	; 50
+ 208:	90 e0       	ldi	r25, 0x00	; 0
+ 20a:	0e 94 67 01 	call	0x2ce	; 0x2ce <saca_uno>
+ 20e:	8d 2f       	mov	r24, r29
+ 210:	0e 94 45 00 	call	0x8a	; 0x8a <SPI_Write>
+ 214:	8c 2f       	mov	r24, r28
+ 216:	0e 94 45 00 	call	0x8a	; 0x8a <SPI_Write>
+	CS_IDLE;
+ 21a:	60 e0       	ldi	r22, 0x00	; 0
+ 21c:	82 e3       	ldi	r24, 0x32	; 50
+ 21e:	90 e0       	ldi	r25, 0x00	; 0
+ 220:	0e 94 67 01 	call	0x2ce	; 0x2ce <saca_uno>
+}
+ 224:	df 91       	pop	r29
+ 226:	cf 91       	pop	r28
+ 228:	1f 91       	pop	r17
+ 22a:	0f 91       	pop	r16
+ 22c:	ff 90       	pop	r15
+ 22e:	ef 90       	pop	r14
+ 230:	df 90       	pop	r13
+ 232:	cf 90       	pop	r12
+ 234:	08 95       	ret
+
+00000236 <draw_pixel>:
+
+void draw_pixel(int16_t x, int16_t y, uint16_t color) {
+ 236:	cf 93       	push	r28
+ 238:	df 93       	push	r29
+ 23a:	c4 2f       	mov	r28, r20
+ 23c:	d5 2f       	mov	r29, r21
+	Set_Addr_Window(x, y, x, y);
+ 23e:	9b 01       	movw	r18, r22
+ 240:	ac 01       	movw	r20, r24
+ 242:	0e 94 74 00 	call	0xe8	; 0xe8 <Set_Addr_Window>
+	CS_ACTIVE;
+ 246:	60 e0       	ldi	r22, 0x00	; 0
+ 248:	82 e3       	ldi	r24, 0x32	; 50
+ 24a:	90 e0       	ldi	r25, 0x00	; 0
+ 24c:	0e 94 73 01 	call	0x2e6	; 0x2e6 <saca_cero>
+	writeData16(color);
+ 250:	61 e0       	ldi	r22, 0x01	; 1
+ 252:	82 e3       	ldi	r24, 0x32	; 50
+ 254:	90 e0       	ldi	r25, 0x00	; 0
+ 256:	0e 94 67 01 	call	0x2ce	; 0x2ce <saca_uno>
+ 25a:	8d 2f       	mov	r24, r29
+ 25c:	0e 94 45 00 	call	0x8a	; 0x8a <SPI_Write>
+ 260:	8c 2f       	mov	r24, r28
+ 262:	0e 94 45 00 	call	0x8a	; 0x8a <SPI_Write>
+}
+ 266:	df 91       	pop	r29
+ 268:	cf 91       	pop	r28
+ 26a:	08 95       	ret
+
+0000026c <init_lcd>:
+
+void init_lcd() {
+	reset();
+ 26c:	0e 94 49 00 	call	0x92	; 0x92 <reset>
+	start();
+ 270:	0e 94 6b 00 	call	0xd6	; 0xd6 <start>
+ 274:	08 95       	ret
+
+00000276 <main>:
+}
+
+
+int main(void)
+{
+	DDRB |= (1 << MOSI)|(1 << SCK);
+ 276:	87 b3       	in	r24, 0x17	; 23
+ 278:	80 6a       	ori	r24, 0xA0	; 160
+ 27a:	87 bb       	out	0x17, r24	; 23
+	SPCR |= (1 << SPE)|(1 << MSTR);
+ 27c:	8d b1       	in	r24, 0x0d	; 13
+ 27e:	80 65       	ori	r24, 0x50	; 80
+ 280:	8d b9       	out	0x0d, r24	; 13
+	DDRSS = 255;
+ 282:	8f ef       	ldi	r24, 0xFF	; 255
+ 284:	8a bb       	out	0x1a, r24	; 26
+	PORTSS = 255;
+ 286:	8b bb       	out	0x1b, r24	; 27
+	DDRCSCD = 255; 
+ 288:	81 bb       	out	0x11, r24	; 17
+	PORTCSCD = 255; 
+ 28a:	82 bb       	out	0x12, r24	; 18
+    
+	init_lcd();
+ 28c:	0e 94 36 01 	call	0x26c	; 0x26c <init_lcd>
+	
+    while (1) 
+    {
+		reset(); 
+ 290:	0e 94 49 00 	call	0x92	; 0x92 <reset>
+		for(int i = 0; i < 240; i++) {
+ 294:	00 e0       	ldi	r16, 0x00	; 0
+ 296:	10 e0       	ldi	r17, 0x00	; 0
+ 298:	16 c0       	rjmp	.+44     	; 0x2c6 <main+0x50>
+			for(int j = 0; j < 320; j++) {
+				draw_pixel(i, j, BLUE); 
+ 29a:	4f e1       	ldi	r20, 0x1F	; 31
+ 29c:	50 e0       	ldi	r21, 0x00	; 0
+ 29e:	be 01       	movw	r22, r28
+ 2a0:	c8 01       	movw	r24, r16
+ 2a2:	0e 94 1b 01 	call	0x236	; 0x236 <draw_pixel>
+ 2a6:	83 ed       	ldi	r24, 0xD3	; 211
+ 2a8:	90 e3       	ldi	r25, 0x30	; 48
+ 2aa:	01 97       	sbiw	r24, 0x01	; 1
+ 2ac:	f1 f7       	brne	.-4      	; 0x2aa <main+0x34>
+ 2ae:	00 c0       	rjmp	.+0      	; 0x2b0 <main+0x3a>
+ 2b0:	00 00       	nop
+	
+    while (1) 
+    {
+		reset(); 
+		for(int i = 0; i < 240; i++) {
+			for(int j = 0; j < 320; j++) {
+ 2b2:	21 96       	adiw	r28, 0x01	; 1
+ 2b4:	02 c0       	rjmp	.+4      	; 0x2ba <main+0x44>
+ 2b6:	c0 e0       	ldi	r28, 0x00	; 0
+ 2b8:	d0 e0       	ldi	r29, 0x00	; 0
+ 2ba:	c0 34       	cpi	r28, 0x40	; 64
+ 2bc:	91 e0       	ldi	r25, 0x01	; 1
+ 2be:	d9 07       	cpc	r29, r25
+ 2c0:	64 f3       	brlt	.-40     	; 0x29a <main+0x24>
+	init_lcd();
+	
+    while (1) 
+    {
+		reset(); 
+		for(int i = 0; i < 240; i++) {
+ 2c2:	0f 5f       	subi	r16, 0xFF	; 255
+ 2c4:	1f 4f       	sbci	r17, 0xFF	; 255
+ 2c6:	00 3f       	cpi	r16, 0xF0	; 240
+ 2c8:	11 05       	cpc	r17, r1
+ 2ca:	ac f3       	brlt	.-22     	; 0x2b6 <main+0x40>
+ 2cc:	e1 cf       	rjmp	.-62     	; 0x290 <main+0x1a>
+
+000002ce <saca_uno>:
+uint8_t uno_en_bit(volatile uint8_t *LUGAR, uint8_t BIT){
+	return (*LUGAR&(1<<BIT));
+}
+
+void saca_uno(volatile uint8_t *LUGAR, uint8_t BIT){
+	*LUGAR=*LUGAR|(1<<BIT);
+ 2ce:	fc 01       	movw	r30, r24
+ 2d0:	40 81       	ld	r20, Z
+ 2d2:	21 e0       	ldi	r18, 0x01	; 1
+ 2d4:	30 e0       	ldi	r19, 0x00	; 0
+ 2d6:	02 c0       	rjmp	.+4      	; 0x2dc <saca_uno+0xe>
+ 2d8:	22 0f       	add	r18, r18
+ 2da:	33 1f       	adc	r19, r19
+ 2dc:	6a 95       	dec	r22
+ 2de:	e2 f7       	brpl	.-8      	; 0x2d8 <saca_uno+0xa>
+ 2e0:	24 2b       	or	r18, r20
+ 2e2:	20 83       	st	Z, r18
+ 2e4:	08 95       	ret
+
+000002e6 <saca_cero>:
+}
+
+void saca_cero(volatile uint8_t *LUGAR, uint8_t BIT){
+ 2e6:	fc 01       	movw	r30, r24
+	*LUGAR=*LUGAR&~(1<<BIT);
+ 2e8:	90 81       	ld	r25, Z
+ 2ea:	21 e0       	ldi	r18, 0x01	; 1
+ 2ec:	30 e0       	ldi	r19, 0x00	; 0
+ 2ee:	02 c0       	rjmp	.+4      	; 0x2f4 <saca_cero+0xe>
+ 2f0:	22 0f       	add	r18, r18
+ 2f2:	33 1f       	adc	r19, r19
+ 2f4:	6a 95       	dec	r22
+ 2f6:	e2 f7       	brpl	.-8      	; 0x2f0 <saca_cero+0xa>
+ 2f8:	20 95       	com	r18
+ 2fa:	29 23       	and	r18, r25
+ 2fc:	20 83       	st	Z, r18
+ 2fe:	08 95       	ret
+
+00000300 <_exit>:
+ 300:	f8 94       	cli
+
+00000302 <__stop_program>:
+ 302:	ff cf       	rjmp	.-2      	; 0x302 <__stop_program>
