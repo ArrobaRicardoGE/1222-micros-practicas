@@ -10,121 +10,66 @@
 #include <util/delay.h>
 #include <stdint.h>
 #include "util.h"
+#include "lcd.h"
 
-#define MOSI 5
-#define SCK 7
-#define MISO 6
-#define SS 4
-#define RESET 0
-#define PORTSS PORTA
-#define DDRSS DDRA
-#define PORTCSCD PORTD
-#define DDRCSCD DDRD
-#define CS 0
-#define CD 1
-
- void transmit(uint8_t cData, uint8_t Device)
- {
-	 /* Start transmission */
-	 PORTSS = ~(1<<Device); // Pongo un 0 en el bit de SS
-	 SPDR = cData; //Comiendo el envío de información
-	 /* Wait for transmission complete */
-	 while(!(SPSR & (1<<SPIF)));
-	 PORTSS = 255;
- }
-
- void SPI_Write(uint8_t data) {
-	 transmit(data, 4); // screen on 4
- }
-
-#define CS_IDLE     saca_uno(&PORTCSCD, CS)
-#define RD_IDLE     0
-#define WR_IDLE     0
-#define CS_ACTIVE   saca_cero(&PORTCSCD, CS)
-#define CD_COMMAND  saca_cero(&PORTCSCD, CD)
-#define CD_DATA     saca_uno(&PORTCSCD, CD)
-
-#define write8(d) SPI_Write(d)
-#define WR_STROBE { }
-#define write16(d) write8(d>>8); write8(d)
-#define writeData16(x)  CD_DATA; write16(x)
-#define writeCmd16(x)  CD_COMMAND; write16(x)
-#define writeCmdData16(a, d)  CD_COMMAND; write8(a>>8); write8(a); CD_DATA; write8(d>>8); write8(d)
-
-#define ILI932X_HOR_START_AD       0x50
-#define ILI932X_HOR_END_AD         0x51
-#define ILI932X_VER_START_AD       0x52
-#define ILI932X_VER_END_AD         0x53
-#define ILI932X_GRAM_HOR_AD        0x20
-#define ILI932X_GRAM_VER_AD        0x21
-
-#define BLUE    0x001F
-#define RED     0xF800
-#define GREEN   0x07E0
-
-void reset() {
-	CS_IDLE;
-	RD_IDLE;
-	WR_IDLE;
-	saca_uno(&PORTB, RESET);
-	CS_ACTIVE;
-	CD_COMMAND;
-	write8(0x00);
-	for(uint8_t i=0; i<3; i++)
-	{
-		WR_STROBE; // Three extra 0x00s
+void show_number(uint8_t x, uint8_t ret) {
+	//for(int i = 0; i < ret; i++) LCD_CMD_8BIT(LCD_Cmd_ShiftL); 
+	int pad = 3; 
+	char ans[pad + 1]; 
+	ans[pad--] = 0;
+	while(x > 0) {
+		ans[pad--] = (x % 10) + '0';
+		x /= 10;
 	}
-	CS_IDLE;
+	while(pad >= 0) {
+		ans[pad--] = '0'; 
+	}
+	LCD_WR_string(ans); 
+	//for(int i = 0; i < ret - 3; i++) LCD_CMD_8BIT(LCD_Cmd_ShiftR); 
 }
 
-void start() {
-	reset();
-	_delay_ms(200);
+void show_rgb(uint8_t r, uint8_t g, uint8_t b) {
+	for(int i = 0; i < 14; i++) LCD_CMD_8BIT(LCD_Cmd_ShiftL); 
+	show_number(r, 14);  
+	for(int i = 0; i < 2; i++) LCD_CMD_8BIT(LCD_Cmd_ShiftR); 
+	show_number(g, 9);
+	for(int i = 0; i < 2; i++) LCD_CMD_8BIT(LCD_Cmd_ShiftR); 
+	show_number(b, 4);
+	for(int i = 0; i < 1; i++) LCD_CMD_8BIT(LCD_Cmd_ShiftR); 
 }
-
-void Set_Addr_Window(int16_t x1, int16_t y1, int16_t x2, int16_t y2) {
-	CS_ACTIVE;
-	writeCmdData16(ILI932X_HOR_START_AD, x1); // Set address window
-	writeCmdData16(ILI932X_HOR_END_AD, x2);
-	writeCmdData16(ILI932X_VER_START_AD, y1);
-	writeCmdData16(ILI932X_VER_END_AD, y2);
-	writeCmdData16(ILI932X_GRAM_HOR_AD, x1 ); // Set address counter to top left
-	writeCmdData16(ILI932X_GRAM_VER_AD, y1 );
-	CS_IDLE;
-}
-
-void draw_pixel(int16_t x, int16_t y, uint16_t color) {
-	Set_Addr_Window(x, y, x, y);
-	CS_ACTIVE;
-	writeData16(color);
-}
-
-void init_lcd() {
-	reset();
-	start();
-}
-
 
 int main(void)
 {
-	DDRB |= (1 << MOSI)|(1 << SCK);
-	SPCR |= (1 << SPE)|(1 << MSTR);
-	DDRSS = 255;
-	PORTSS = 255;
-	DDRCSCD = 255; 
-	PORTCSCD = 255; 
-    
-	init_lcd();
+	LCD_inicialization();
+	LCD_WR_string("(000, 000, 000)"); 
+	_delay_ms(1000);
 	
-    while (1) 
-    {
-		reset(); 
-		for(int i = 0; i < 240; i++) {
-			for(int j = 0; j < 320; j++) {
-				draw_pixel(i, j, BLUE); 
-				_delay_ms(50); 
+	// PWM
+	TCCR0|=(1<<WGM00)|(1<<WGM01)|(1<<COM01)|(0<<CS02)|(0<<CS01)|(1<<CS00);
+	TCCR1A|=(1<<COM1A1)|(1<<COM1B1)|(1<<WGM11);
+	TCCR1B|=(1<<WGM13)|(1<<WGM12)|(0<<CS12)|(0<<CS11)|(1<<CS10);
+	ICR1=255;
+	
+	DDRB|=(1<<3);
+	DDRD|=(1<<5)|(1<<4);
+	
+	OCR0=0;
+	OCR1A=0;
+	OCR1B=0;
+	
+	while (1)
+	{
+		for(int i = 0; i < 256; i+=16) {
+			for(int j = 0; j < 256; j+=16) {
+				for(int k = 0; k < 256; k+=16) {
+					show_rgb(i, j, k); 
+					OCR0 = i; 
+					OCR1A = j; 
+					OCR1B = k; 
+				}
 			}
 		}
-    }
+		
+	}
 }
 
