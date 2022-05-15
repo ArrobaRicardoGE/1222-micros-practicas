@@ -52,8 +52,6 @@ d:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/..
                               i2c.o (__do_copy_data)
 d:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_clear_bss.o)
                               main.o (__do_clear_bss)
-d:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_umulhisi3.o)
-                              main.o (__umulhisi3)
 
 Allocating common symbols
 Common symbol       size              file
@@ -73,8 +71,6 @@ Discarded input sections
  .text          0x00000000        0x0 main.o
  .data          0x00000000        0x0 main.o
  .bss           0x00000000        0x0 main.o
- .text.show_numberp
-                0x00000000       0xde main.o
  .text          0x00000000        0x0 util.o
  .data          0x00000000        0x0 util.o
  .bss           0x00000000        0x0 util.o
@@ -197,22 +193,6 @@ Discarded input sections
                 0x00000000        0x0 d:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_clear_bss.o)
  .text.libgcc.fixed
                 0x00000000        0x0 d:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_clear_bss.o)
- .text          0x00000000        0x0 d:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_umulhisi3.o)
- .data          0x00000000        0x0 d:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_umulhisi3.o)
- .bss           0x00000000        0x0 d:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_umulhisi3.o)
- .text.libgcc.mul
-                0x00000000       0x1e d:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_umulhisi3.o)
- .text.libgcc.div
-                0x00000000        0x0 d:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_umulhisi3.o)
- .text.libgcc   0x00000000        0x0 d:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_umulhisi3.o)
- .text.libgcc.prologue
-                0x00000000        0x0 d:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_umulhisi3.o)
- .text.libgcc.builtins
-                0x00000000        0x0 d:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_umulhisi3.o)
- .text.libgcc.fmul
-                0x00000000        0x0 d:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_umulhisi3.o)
- .text.libgcc.fixed
-                0x00000000        0x0 d:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_umulhisi3.o)
 
 Memory Configuration
 
@@ -703,69 +683,69 @@ END GROUP
 .debug_sfnames
  *(.debug_sfnames)
 
-.debug_aranges  0x00000000      0x138
+.debug_aranges  0x00000000      0x130
  *(.debug_aranges)
  .debug_aranges
                 0x00000000       0x50 i2c.o
  .debug_aranges
                 0x00000050       0x48 lcd.o
  .debug_aranges
-                0x00000098       0x68 main.o
+                0x00000098       0x60 main.o
  .debug_aranges
-                0x00000100       0x38 util.o
+                0x000000f8       0x38 util.o
 
 .debug_pubnames
  *(.debug_pubnames)
 
-.debug_info     0x00000000     0x1bc2
+.debug_info     0x00000000     0x1b45
  *(.debug_info .gnu.linkonce.wi.*)
  .debug_info    0x00000000      0x52e D:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.6.364/gcc/dev/atmega16a/avr5/crtatmega16a.o
  .debug_info    0x0000052e      0x200 i2c.o
  .debug_info    0x0000072e      0x9b2 lcd.o
- .debug_info    0x000010e0      0x984 main.o
- .debug_info    0x00001a64      0x15e util.o
+ .debug_info    0x000010e0      0x907 main.o
+ .debug_info    0x000019e7      0x15e util.o
 
-.debug_abbrev   0x00000000      0xa8a
+.debug_abbrev   0x00000000      0xa6f
  *(.debug_abbrev)
  .debug_abbrev  0x00000000      0x4e7 D:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.6.364/gcc/dev/atmega16a/avr5/crtatmega16a.o
  .debug_abbrev  0x000004e7      0x146 i2c.o
  .debug_abbrev  0x0000062d      0x171 lcd.o
- .debug_abbrev  0x0000079e      0x228 main.o
- .debug_abbrev  0x000009c6       0xc4 util.o
+ .debug_abbrev  0x0000079e      0x20d main.o
+ .debug_abbrev  0x000009ab       0xc4 util.o
 
-.debug_line     0x00000000      0xc49
+.debug_line     0x00000000      0xbf0
  *(.debug_line .debug_line.* .debug_line_end)
  .debug_line    0x00000000      0x115 D:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.6.364/gcc/dev/atmega16a/avr5/crtatmega16a.o
  .debug_line    0x00000115      0x220 i2c.o
  .debug_line    0x00000335      0x363 lcd.o
- .debug_line    0x00000698      0x4c6 main.o
- .debug_line    0x00000b5e       0xeb util.o
+ .debug_line    0x00000698      0x46d main.o
+ .debug_line    0x00000b05       0xeb util.o
 
-.debug_frame    0x00000000      0x32c
+.debug_frame    0x00000000      0x2f0
  *(.debug_frame)
  .debug_frame   0x00000000       0x84 i2c.o
  .debug_frame   0x00000084       0x90 lcd.o
- .debug_frame   0x00000114      0x1c4 main.o
- .debug_frame   0x000002d8       0x54 util.o
+ .debug_frame   0x00000114      0x188 main.o
+ .debug_frame   0x0000029c       0x54 util.o
 
-.debug_str      0x00000000      0x4f6
+.debug_str      0x00000000      0x4e9
  *(.debug_str)
  .debug_str     0x00000000      0x1af D:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.6.364/gcc/dev/atmega16a/avr5/crtatmega16a.o
  .debug_str     0x000001af      0x205 i2c.o
                                 0x243 (size before relaxing)
  .debug_str     0x000003b4       0x7f lcd.o
                                 0x24b (size before relaxing)
- .debug_str     0x00000433       0xa5 main.o
-                                0x2eb (size before relaxing)
- .debug_str     0x000004d8       0x1e util.o
+ .debug_str     0x00000433       0x98 main.o
+                                0x2de (size before relaxing)
+ .debug_str     0x000004cb       0x1e util.o
                                 0x19d (size before relaxing)
 
-.debug_loc      0x00000000     0x1072
+.debug_loc      0x00000000      0xef2
  *(.debug_loc)
  .debug_loc     0x00000000       0xa2 i2c.o
  .debug_loc     0x000000a2      0x540 lcd.o
- .debug_loc     0x000005e2      0xa40 main.o
- .debug_loc     0x00001022       0x50 util.o
+ .debug_loc     0x000005e2      0x8c0 main.o
+ .debug_loc     0x00000ea2       0x50 util.o
 
 .debug_macinfo
  *(.debug_macinfo)
@@ -785,12 +765,12 @@ END GROUP
 .debug_pubtypes
  *(.debug_pubtypes)
 
-.debug_ranges   0x00000000       0xf8
+.debug_ranges   0x00000000       0xf0
  *(.debug_ranges)
  .debug_ranges  0x00000000       0x40 i2c.o
  .debug_ranges  0x00000040       0x38 lcd.o
- .debug_ranges  0x00000078       0x58 main.o
- .debug_ranges  0x000000d0       0x28 util.o
+ .debug_ranges  0x00000078       0x50 main.o
+ .debug_ranges  0x000000c8       0x28 util.o
 
 .debug_macro
  *(.debug_macro)

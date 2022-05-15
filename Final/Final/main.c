@@ -33,19 +33,6 @@ void show_number(uint8_t x) {
 	LCD_WR_string(ans); 
 }
 
-void show_numberp(uint16_t x, int pad) {
-	char ans[pad + 1];
-	ans[pad--] = 0;
-	while(x > 0) {
-		ans[pad--] = (x % 10) + '0';
-		x /= 10;
-	}
-	while(pad >= 0) {
-		ans[pad--] = '0';
-	}
-	LCD_WR_string(ans);
-}
-
 void show_rgb(uint8_t r, uint8_t g, uint8_t b) {
 	for(int i = 0; i < 14; i++) LCD_CMD_8BIT(LCD_Cmd_ShiftL); 
 	show_number(r);  
@@ -81,20 +68,11 @@ uint16_t read_color_16(uint8_t color) {
 	i2c_write_data((0xA0 | color));
 	i2c_start_condition();
 	i2c_set_addr(PCS_READ_ADDR);
-	////uint16_t ans = i2c_read_ack();
-	//i2c_read_ack(); 
-	//uint16_t ans = 0; 
-	//ans |= ((uint16_t)i2c_read_nack() << 8);
 	uint16_t low = i2c_read_ack();
-	uint16_t high = (uint16_t)i2c_read_nack(); // high
-	//if(high != 0) LCD_WR_CHAR('w'); 
+	uint16_t high = (uint16_t)i2c_read_nack(); 
 	high <<= 8; 
 	i2c_stop_condition();
-	//if(high == 0) LCD_WR_string("f"); 
 	return high | low;
-	//uint16_t ans = (read_cmd_8(color) & 0xFF); 
-	//ans |= (((uint16_t)read_cmd_8(color + 1)) << 8); 
-	//return ans; 
 }
 
 void enable() {
@@ -115,24 +93,6 @@ void get_raw_values(uint16_t *r, uint16_t *g, uint16_t *b, uint16_t *c) {
 void get_rgb(uint8_t *r, uint8_t *g, uint8_t *b) {
 	uint16_t _r, _g, _b, _c; 
 	get_raw_values(&_r, &_g, &_b, &_c); 
-	
-	//LCD_CMD_8BIT(LCD_Cmd_Clear); 
-	//if(_r == 0) LCD_WR_CHAR('t'); 
-	//show_numberp(_r, 5); 
-	//_delay_ms(1000); 
-	//LCD_CMD_8BIT(LCD_Cmd_Clear);
-	//if(_g == 0) LCD_WR_CHAR('t'); 
-	//show_numberp(_g, 5);
-	//_delay_ms(1000);
-	//LCD_CMD_8BIT(LCD_Cmd_Clear);
-	//if(_b == 0) LCD_WR_CHAR('t'); 
-	//show_numberp(_b, 5);
-	//_delay_ms(1000);
-	//LCD_CMD_8BIT(LCD_Cmd_Clear);
-	//if(_c == 0) LCD_WR_CHAR('t'); 
-	//show_numberp(_c, 5);
-	//_delay_ms(1000);
-	//LCD_CMD_8BIT(LCD_Cmd_Clear);
 	
 	// If no light
 	if(_c == 0) {
@@ -167,7 +127,7 @@ int main(void)
 	i2c_init(); 
 	while(read_cmd_8(0x12) != 0x44) {
 		LCD_CMD_8BIT(LCD_Cmd_Clear); 
-		LCD_WR_string("PCS not found"); 
+		LCD_WR_string("TCS not found"); 
 		_delay_ms(1000); 
 	}
 	// Set integration time and gain
@@ -196,7 +156,6 @@ int main(void)
 		OCR0 = color_table[r];
 		OCR1A = color_table[g];
 		OCR1B = color_table[b];
-		//_delay_ms(1000); 
 	}
 }
 

@@ -13,21 +13,21 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY
   4 .note.gnu.avr.deviceinfo 0000003c  00000000  00000000  0000112c  2**2
                   CONTENTS, READONLY
-  5 .debug_aranges 00000138  00000000  00000000  00001168  2**0
+  5 .debug_aranges 00000130  00000000  00000000  00001168  2**0
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_info   00001bc2  00000000  00000000  000012a0  2**0
+  6 .debug_info   00001b45  00000000  00000000  00001298  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_abbrev 00000a8a  00000000  00000000  00002e62  2**0
+  7 .debug_abbrev 00000a6f  00000000  00000000  00002ddd  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_line   00000c49  00000000  00000000  000038ec  2**0
+  8 .debug_line   00000bf0  00000000  00000000  0000384c  2**0
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_frame  0000032c  00000000  00000000  00004538  2**2
+  9 .debug_frame  000002f0  00000000  00000000  0000443c  2**2
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_str    000004f6  00000000  00000000  00004864  2**0
+ 10 .debug_str    000004e9  00000000  00000000  0000472c  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_loc    00001072  00000000  00000000  00004d5a  2**0
+ 11 .debug_loc    00000ef2  00000000  00000000  00004c15  2**0
                   CONTENTS, READONLY, DEBUGGING
- 12 .debug_ranges 000000f8  00000000  00000000  00005dcc  2**0
+ 12 .debug_ranges 000000f0  00000000  00000000  00005b07  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -722,22 +722,27 @@ void LCD_inicialization(void){
      41c:	08 95       	ret
 
 0000041e <show_number>:
-	}
-	while(pad >= 0) {
-		ans[pad--] = '0';
-	}
-	LCD_WR_string(ans);
-}
+#define PCS_READ_ADDR ((0x29 << 1) + 1)
+
+uint8_t volatile color_table[256]; 
+
+
+void show_number(uint8_t x) {
      41e:	cf 93       	push	r28
      420:	df 93       	push	r29
      422:	00 d0       	rcall	.+0      	; 0x424 <show_number+0x6>
      424:	00 d0       	rcall	.+0      	; 0x426 <show_number+0x8>
      426:	cd b7       	in	r28, 0x3d	; 61
      428:	de b7       	in	r29, 0x3e	; 62
+	int pad = 3; 
+	char ans[pad + 1]; 
+	ans[pad--] = 0;
      42a:	1c 82       	std	Y+4, r1	; 0x04
      42c:	22 e0       	ldi	r18, 0x02	; 2
      42e:	30 e0       	ldi	r19, 0x00	; 0
+	while(x > 0) {
      430:	19 c0       	rjmp	.+50     	; 0x464 <__stack+0x5>
+		ans[pad--] = (x % 10) + '0';
      432:	e1 e0       	ldi	r30, 0x01	; 1
      434:	f0 e0       	ldi	r31, 0x00	; 0
      436:	ec 0f       	add	r30, r28
@@ -760,12 +765,30 @@ void LCD_inicialization(void){
      458:	84 1b       	sub	r24, r20
      45a:	80 5d       	subi	r24, 0xD0	; 208
      45c:	80 83       	st	Z, r24
+		x /= 10;
      45e:	89 2f       	mov	r24, r25
+void show_number(uint8_t x) {
+	int pad = 3; 
+	char ans[pad + 1]; 
+	ans[pad--] = 0;
+	while(x > 0) {
+		ans[pad--] = (x % 10) + '0';
      460:	21 50       	subi	r18, 0x01	; 1
      462:	31 09       	sbc	r19, r1
+
+void show_number(uint8_t x) {
+	int pad = 3; 
+	char ans[pad + 1]; 
+	ans[pad--] = 0;
+	while(x > 0) {
      464:	81 11       	cpse	r24, r1
      466:	e5 cf       	rjmp	.-54     	; 0x432 <show_number+0x14>
      468:	0a c0       	rjmp	.+20     	; 0x47e <__stack+0x1f>
+		ans[pad--] = (x % 10) + '0';
+		x /= 10;
+	}
+	while(pad >= 0) {
+		ans[pad--] = '0'; 
      46a:	e1 e0       	ldi	r30, 0x01	; 1
      46c:	f0 e0       	ldi	r31, 0x00	; 0
      46e:	ec 0f       	add	r30, r28
@@ -776,11 +799,21 @@ void LCD_inicialization(void){
      478:	80 83       	st	Z, r24
      47a:	21 50       	subi	r18, 0x01	; 1
      47c:	31 09       	sbc	r19, r1
+	ans[pad--] = 0;
+	while(x > 0) {
+		ans[pad--] = (x % 10) + '0';
+		x /= 10;
+	}
+	while(pad >= 0) {
      47e:	33 23       	and	r19, r19
      480:	a4 f7       	brge	.-24     	; 0x46a <__stack+0xb>
+		ans[pad--] = '0'; 
+	}
+	LCD_WR_string(ans); 
      482:	ce 01       	movw	r24, r28
      484:	01 96       	adiw	r24, 0x01	; 1
      486:	0e 94 64 01 	call	0x2c8	; 0x2c8 <LCD_WR_string>
+}
      48a:	0f 90       	pop	r0
      48c:	0f 90       	pop	r0
      48e:	0f 90       	pop	r0
@@ -935,29 +968,20 @@ uint16_t read_color_16(uint8_t color) {
 	i2c_set_addr(PCS_READ_ADDR);
      590:	83 e5       	ldi	r24, 0x53	; 83
      592:	0e 94 af 00 	call	0x15e	; 0x15e <i2c_set_addr>
-	////uint16_t ans = i2c_read_ack();
-	//i2c_read_ack(); 
-	//uint16_t ans = 0; 
-	//ans |= ((uint16_t)i2c_read_nack() << 8);
 	uint16_t low = i2c_read_ack();
      596:	0e 94 c7 00 	call	0x18e	; 0x18e <i2c_read_ack>
      59a:	08 2f       	mov	r16, r24
      59c:	10 e0       	ldi	r17, 0x00	; 0
-	uint16_t high = (uint16_t)i2c_read_nack(); // high
+	uint16_t high = (uint16_t)i2c_read_nack(); 
      59e:	0e 94 c0 00 	call	0x180	; 0x180 <i2c_read_nack>
      5a2:	c8 2f       	mov	r28, r24
      5a4:	d0 e0       	ldi	r29, 0x00	; 0
-	//if(high != 0) LCD_WR_CHAR('w'); 
 	high <<= 8; 
      5a6:	dc 2f       	mov	r29, r28
      5a8:	cc 27       	eor	r28, r28
 	i2c_stop_condition();
      5aa:	0e 94 bd 00 	call	0x17a	; 0x17a <i2c_stop_condition>
-	//if(high == 0) LCD_WR_string("f"); 
 	return high | low;
-	//uint16_t ans = (read_cmd_8(color) & 0xFF); 
-	//ans |= (((uint16_t)read_cmd_8(color + 1)) << 8); 
-	//return ans; 
 }
      5ae:	c8 01       	movw	r24, r16
      5b0:	8c 2b       	or	r24, r28
@@ -1108,9 +1132,6 @@ void get_rgb(uint8_t *r, uint8_t *g, uint8_t *b) {
      6a0:	ce 01       	movw	r24, r28
      6a2:	01 96       	adiw	r24, 0x01	; 1
      6a4:	0e 94 f7 02 	call	0x5ee	; 0x5ee <get_raw_values>
-	//show_numberp(_c, 5);
-	//_delay_ms(1000);
-	//LCD_CMD_8BIT(LCD_Cmd_Clear);
 	
 	// If no light
 	if(_c == 0) {
@@ -1292,7 +1313,7 @@ int main(void)
 		LCD_CMD_8BIT(LCD_Cmd_Clear); 
      7e8:	81 e0       	ldi	r24, 0x01	; 1
      7ea:	0e 94 91 01 	call	0x322	; 0x322 <LCD_CMD_8BIT>
-		LCD_WR_string("PCS not found"); 
+		LCD_WR_string("TCS not found"); 
      7ee:	80 e7       	ldi	r24, 0x70	; 112
      7f0:	90 e0       	ldi	r25, 0x00	; 0
      7f2:	0e 94 64 01 	call	0x2c8	; 0x2c8 <LCD_WR_string>
@@ -1316,7 +1337,7 @@ int main(void)
      80e:	84 34       	cpi	r24, 0x44	; 68
      810:	59 f7       	brne	.-42     	; 0x7e8 <main+0x48>
 		LCD_CMD_8BIT(LCD_Cmd_Clear); 
-		LCD_WR_string("PCS not found"); 
+		LCD_WR_string("TCS not found"); 
 		_delay_ms(1000); 
 	}
 	// Set integration time and gain
