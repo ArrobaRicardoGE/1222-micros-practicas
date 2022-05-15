@@ -11,13 +11,15 @@
 #include <stdint.h>
 #include "util.h"
 #include "lcd.h"
-#include "I2C.h"
+#include "i2c.h"
 
 #define PCS_WRITE_ADDR (0x29 << 1)
 #define PCS_READ_ADDR ((0x29 << 1) + 1)
 
+uint8_t volatile color_table[256]; 
+
+
 void show_number(uint8_t x) {
-	//for(int i = 0; i < ret; i++) LCD_CMD_8BIT(LCD_Cmd_ShiftL); 
 	int pad = 3; 
 	char ans[pad + 1]; 
 	ans[pad--] = 0;
@@ -29,7 +31,19 @@ void show_number(uint8_t x) {
 		ans[pad--] = '0'; 
 	}
 	LCD_WR_string(ans); 
-	//for(int i = 0; i < ret - 3; i++) LCD_CMD_8BIT(LCD_Cmd_ShiftR); 
+}
+
+void show_numberp(uint16_t x, int pad) {
+	char ans[pad + 1];
+	ans[pad--] = 0;
+	while(x > 0) {
+		ans[pad--] = (x % 10) + '0';
+		x /= 10;
+	}
+	while(pad >= 0) {
+		ans[pad--] = '0';
+	}
+	LCD_WR_string(ans);
 }
 
 void show_rgb(uint8_t r, uint8_t g, uint8_t b) {
@@ -42,71 +56,99 @@ void show_rgb(uint8_t r, uint8_t g, uint8_t b) {
 	for(int i = 0; i < 1; i++) LCD_CMD_8BIT(LCD_Cmd_ShiftR); 
 }
 
-uint8_t read8(uint8_t reg) {
-	//LCD_WR_CHAR('A'); 
-	//uint8_t val = I2C_Start(0x29); // Specified in datasheet
-	//show_number(val);
-	//_delay_ms(1000); 
-	//LCD_CMD_8BIT(LCD_Cmd_Clear);
-	//I2C_Stop(); 
-	uint8_t val = I2C_Start(0x29); 
-	show_number(val);
-	uint8_t req = (0x80 | reg); // command bit
-	I2C_Write(req); 
-	val = I2C_Read_Ack(); 
-	I2C_Stop();
-	return val;
-}
-
-void start_condition() {
-	TWCR = (1 << TWINT)|(1 << TWSTA)|(1 << TWEN); 
-	while(!(TWCR & (1 << TWINT))); 
-	uint8_t status = TWSR & 0xF8; 
-	//show_number(status); 
-}
-
-void set_addr(uint8_t addr) {
-	TWDR = addr; 
-	TWCR = (1 << TWINT)|(1 << TWEN);
-	while(!(TWCR & (1 << TWINT))) {
-		//LCD_WR_CHAR('a'); 
-	}
-	//show_number(TWSR & 0xF8); 
-}
-
-void write_data(uint8_t data) {
-	TWDR = data; 
-	TWCR = (1 << TWINT)|(1 << TWEN); 
-	while(!(TWCR & (1 << TWINT))); 
-	//show_number(TWSR & 0xF8); 
-}
-
-void stop_condition() {
-	TWCR = (1 << TWINT)|(1 << TWEN)|(1 << TWSTO); 
-}
-
-uint8_t read_nack() {
-	TWCR=(1<<TWEN)|(1<<TWINT);
-	while (!(TWCR & (1<<TWINT)));
-	return TWDR; 
+void write_cmd_8(uint8_t cmd, uint8_t val) {
+	i2c_start_condition();
+	i2c_set_addr(PCS_WRITE_ADDR);
+	i2c_write_data((0x80 | cmd));	// mask with command byte
+	i2c_write_data(val);
+	i2c_stop_condition();
 }
 
 uint8_t read_cmd_8(uint8_t cmd) {
-	start_condition(); 
-	set_addr(PCS_WRITE_ADDR); 
-	write_data((0x80 | cmd));	// mask with command byte
-	start_condition();			// repeated start
-	set_addr(PCS_READ_ADDR); 
-	uint8_t ans = read_nack();
-	stop_condition(); 
+	i2c_start_condition(); 
+	i2c_set_addr(PCS_WRITE_ADDR); 
+	i2c_write_data((0x80 | cmd));	// mask with command byte
+	i2c_start_condition();			// repeated start
+	i2c_set_addr(PCS_READ_ADDR); 
+	uint8_t ans = i2c_read_nack();
+	i2c_stop_condition(); 
 	return ans; 
+}
+
+uint16_t read_color_16(uint8_t color) {
+	i2c_start_condition();
+	i2c_set_addr(PCS_WRITE_ADDR);
+	i2c_write_data((0xA0 | color));
+	i2c_start_condition();
+	i2c_set_addr(PCS_READ_ADDR);
+	////uint16_t ans = i2c_read_ack();
+	//i2c_read_ack(); 
+	//uint16_t ans = 0; 
+	//ans |= ((uint16_t)i2c_read_nack() << 8);
+	uint16_t low = i2c_read_ack();
+	uint16_t high = (uint16_t)i2c_read_nack(); // high
+	//if(high != 0) LCD_WR_CHAR('w'); 
+	high <<= 8; 
+	i2c_stop_condition();
+	//if(high == 0) LCD_WR_string("f"); 
+	return high | low;
+	//uint16_t ans = (read_cmd_8(color) & 0xFF); 
+	//ans |= (((uint16_t)read_cmd_8(color + 1)) << 8); 
+	//return ans; 
+}
+
+void enable() {
+	write_cmd_8(0x00, 0x01);			// PON
+	_delay_ms(3); 
+	write_cmd_8(0x00, 0x01 | 0x02);		// PON | AEN
+	_delay_ms(700); 
+}
+
+void get_raw_values(uint16_t *r, uint16_t *g, uint16_t *b, uint16_t *c) {
+	*c = read_color_16(0x14); 
+	*r = read_color_16(0x16); 
+	*g = read_color_16(0x18); 
+	*b = read_color_16(0x1A); 
+	_delay_ms(700); 
+}
+
+void get_rgb(uint8_t *r, uint8_t *g, uint8_t *b) {
+	uint16_t _r, _g, _b, _c; 
+	get_raw_values(&_r, &_g, &_b, &_c); 
+	
+	//LCD_CMD_8BIT(LCD_Cmd_Clear); 
+	//if(_r == 0) LCD_WR_CHAR('t'); 
+	//show_numberp(_r, 5); 
+	//_delay_ms(1000); 
+	//LCD_CMD_8BIT(LCD_Cmd_Clear);
+	//if(_g == 0) LCD_WR_CHAR('t'); 
+	//show_numberp(_g, 5);
+	//_delay_ms(1000);
+	//LCD_CMD_8BIT(LCD_Cmd_Clear);
+	//if(_b == 0) LCD_WR_CHAR('t'); 
+	//show_numberp(_b, 5);
+	//_delay_ms(1000);
+	//LCD_CMD_8BIT(LCD_Cmd_Clear);
+	//if(_c == 0) LCD_WR_CHAR('t'); 
+	//show_numberp(_c, 5);
+	//_delay_ms(1000);
+	//LCD_CMD_8BIT(LCD_Cmd_Clear);
+	
+	// If no light
+	if(_c == 0) {
+		*r = *g = *b = 0; 
+		return;
+	}
+	
+	*r = (float)_r / (float)_c * 255.0; 
+	*g = (float)_g / (float)_c * 255.0; 
+	*b = (float)_b / (float)_c * 255.0; 
 }
 
 int main(void)
 {
 	// LCD
 	LCD_inicialization();
-	//LCD_WR_string("(000, 000, 000)"); 
 	
 	// PWM
 	TCCR0|=(1<<WGM00)|(1<<WGM01)|(1<<COM01)|(0<<CS02)|(0<<CS01)|(1<<CS00);
@@ -122,47 +164,39 @@ int main(void)
 	OCR1B=255;
 	
 	// I2C - TCS34725
-	PORTC = 255; 
-	//I2C_Init(); 
-	//start_condition(); 
-	//_delay_ms(1000); 
-	//LCD_CMD_8BIT(LCD_Cmd_Clear); 
-	//set_addr(PCS_WRITE_ADDR); 
-	//_delay_ms(1000); 
-	//LCD_CMD_8BIT(LCD_Cmd_Clear); 
-	//write_data(0x92);
-	//_delay_ms(1000);
-	//LCD_CMD_8BIT(LCD_Cmd_Clear);
-	//start_condition(); 
-	//_delay_ms(1000);
-	//LCD_CMD_8BIT(LCD_Cmd_Clear);
-	//set_addr(PCS_READ_ADDR); 
-	//_delay_ms(1000);
-	//LCD_CMD_8BIT(LCD_Cmd_Clear);	
-	//TWCR=(1<<TWEN)|(1<<TWINT);								/* Enable TWI and clear interrupt flag */
-	//while (!(TWCR & (1<<TWINT)));							/* Wait until TWI finish its current job (read operation) */
-	//show_number(TWDR);
-	//_delay_ms(1000); 
-	//_delay_ms(1000); 
-	//stop_condition();  
-	show_number(read_cmd_8(0x12)); 
-	//uint8_t x = read8(0x12); 
-	////LCD_CMD_8BIT(LCD_Cmd_Clear);
-	//LCD_WR_string("ID: ");  
-	//show_number(x); 
+	i2c_init(); 
+	while(read_cmd_8(0x12) != 0x44) {
+		LCD_CMD_8BIT(LCD_Cmd_Clear); 
+		LCD_WR_string("PCS not found"); 
+		_delay_ms(1000); 
+	}
+	// Set integration time and gain
+	write_cmd_8(0x01, 0x00); // 700ms 
+	write_cmd_8(0x0F, 0x01); // 4x
+	
+	enable(); 
+	uint8_t r, g, b;
+	LCD_CMD_8BIT(LCD_Cmd_Clear); 
+	LCD_WR_string("(000, 000, 000)"); 
+	
+	// Fill color table
+	for (int i=0; i<256; i++)
+	{
+		float x = i;
+		x /= 255;
+		x = pow(x, 2.5);
+		x *= 255;
+		color_table[i] = x;
+	}
 	
 	while (1)
 	{
-		//for(int i = 0; i < 256; i+=16) {
-			//for(int j = 0; j < 256; j+=16) {
-				//for(int k = 0; k < 256; k+=16) {
-					//show_rgb(i, j, k); 
-					//OCR0 = i; 
-					//OCR1A = j; 
-					//OCR1B = k; 
-				//}
-			//}
-		//}
+		get_rgb(&r, &g, &b); 
+		show_rgb(r, g, b); 
+		OCR0 = color_table[r];
+		OCR1A = color_table[g];
+		OCR1B = color_table[b];
+		//_delay_ms(1000); 
 	}
 }
 

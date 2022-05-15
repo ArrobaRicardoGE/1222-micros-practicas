@@ -2,7 +2,7 @@
 # Automatically-generated file. Do not edit or delete the file
 ################################################################################
 
-I2C.c
+i2c.c
 
 lcd.c
 

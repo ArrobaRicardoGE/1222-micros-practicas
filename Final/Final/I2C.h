@@ -6,16 +6,16 @@
 #include <util/delay.h>
 #include <math.h>
 #include <stdint.h>
+#include "lcd.h"	//debugging
 #define SCL_CLK 100000
 #define BITRATE(TWSR)	((F_CPU/SCL_CLK)-16)/(2*pow(4,(TWSR&((1<<TWPS0)|(1<<TWPS1)))))
 
-void I2C_Init();								/* I2C initialize function */
-uint8_t  I2C_Start(char write_address);			/* I2C start function */
-uint8_t  I2C_Repeated_Start(char read_address);	/* I2C repeated start function */
-void I2C_Stop();								/* I2C stop function */
-void I2C_Start_Wait(char write_address);		/* I2C start wait function */
-uint8_t  I2C_Write(char data);					/* I2C write function */
-char I2C_Read_Ack();							/* I2C read ack function */
-char I2C_Read_Nack();							/* I2C read nack function */
+void i2c_init(); 
+void i2c_start_condition(); 
+void i2c_set_addr(uint8_t addr);
+void i2c_write_data(uint8_t data); 
+void i2c_stop_condition(); 
+uint8_t i2c_read_nack(); 
+uint8_t i2c_read_ack(); 
 
 #endif

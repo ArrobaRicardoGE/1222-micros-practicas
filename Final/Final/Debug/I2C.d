@@ -1,4 +1,4 @@
-I2C.d I2C.o: .././I2C.c .././I2C.h \
+i2c.d i2c.o: .././i2c.c .././i2c.h \
  d:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\io.h \
  d:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\sfr_defs.h \
  d:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\inttypes.h \
@@ -15,7 +15,7 @@ I2C.d I2C.o: .././I2C.c .././I2C.h \
  d:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\math.h \
  .././lcd.h .././util.h
 
-.././I2C.h:
+.././i2c.h:
 
 d:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\io.h:
 
